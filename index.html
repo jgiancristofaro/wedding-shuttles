@@ -206,6 +206,125 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
 @media (prefers-reduced-motion: no-preference) {
   .row, .chip, .day, .vcard, .blk { transition: background-color .15s, opacity .15s, box-shadow .15s; }
 }
+
+/* Live map */
+:root {
+  --m-land: #f4f2ee; --m-block: #ebe8e2; --m-water: #a9d3f2; --m-water-ink: #3f78a8; --m-park: #cfe8c8;
+  --m-road: #ffffff; --m-road-case: #d6d2ca; --m-hwy: #fbe3a0; --m-hwy-case: #e3b960;
+  --m-label: #6b7280; --m-label-strong: #2b3440; --m-halo: #f4f2ee;
+  --m-pin-stay: #5b5f97; --m-pin-venue: #c2410c; --m-shadow: rgba(16, 24, 40, .28);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --m-land: #1c2128; --m-block: #222830; --m-water: #17334d; --m-water-ink: #7fb2dd; --m-park: #1f3527;
+    --m-road: #3a424d; --m-road-case: #2a3038; --m-hwy: #6b5a2e; --m-hwy-case: #4a3f22;
+    --m-label: #9aa4b1; --m-label-strong: #e2e7ee; --m-halo: #1c2128;
+    --m-pin-stay: #9da2e0; --m-pin-venue: #f08a55; --m-shadow: rgba(0, 0, 0, .5);
+  }
+}
+:root[data-theme="dark"] {
+  --m-land: #1c2128; --m-block: #222830; --m-water: #17334d; --m-water-ink: #7fb2dd; --m-park: #1f3527;
+  --m-road: #3a424d; --m-road-case: #2a3038; --m-hwy: #6b5a2e; --m-hwy-case: #4a3f22;
+  --m-label: #9aa4b1; --m-label-strong: #e2e7ee; --m-halo: #1c2128;
+  --m-pin-stay: #9da2e0; --m-pin-venue: #f08a55; --m-shadow: rgba(0, 0, 0, .5);
+}
+.live-days { display: flex; gap: 8px; }
+.live-days .chip[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.live-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; align-items: start; }
+.map-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; min-width: 0; }
+.map-box { position: relative; height: 540px; background: var(--m-land); }
+#map { width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.map-clock {
+  position: absolute; left: 12px; top: 12px; max-width: calc(100% - 24px);
+  background: var(--surface); border-radius: 10px; padding: 8px 12px; box-shadow: 0 2px 10px var(--m-shadow);
+  display: flex; flex-direction: column; pointer-events: none;
+}
+.map-clock .clock { font-family: var(--display); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.map-clock .caption { font-size: 13px; color: var(--muted); }
+.map-zoom {
+  position: absolute; right: 12px; top: 12px; display: flex; background: var(--surface);
+  border-radius: 999px; box-shadow: 0 2px 10px var(--m-shadow); padding: 3px;
+}
+.map-zoom button { border: 0; background: none; border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 600; color: var(--muted); }
+.map-zoom button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.player { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 16px 14px; border-top: 1px solid var(--line); }
+.play { width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
+.play svg { width: 22px; height: 22px; fill: currentColor; }
+.play .i-pause { display: none; }
+.play.on .i-play { display: none; }
+.play.on .i-pause { display: inline; }
+.scrub { position: relative; padding-top: 32px; min-width: 0; }
+.scrub-marks { position: absolute; left: 9px; right: 9px; top: 14px; height: 18px; }
+.scrub-mark.up { top: -14px; }
+.scrub-mark.up::after { height: 22px; }
+.scrub-mark { position: absolute; transform: translateX(-50%); font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); white-space: nowrap; border: 0; background: none; padding: 0 2px; }
+.scrub-mark::after { content: ""; position: absolute; left: 50%; top: 15px; width: 1px; height: 8px; background: var(--muted); }
+.scrub-mark:hover { color: var(--ink); }
+#scrubber { width: 100%; margin: 0; accent-color: var(--accent); height: 26px; cursor: pointer; }
+.scrub-ends { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.speed { display: flex; flex-direction: column; font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; gap: 2px; }
+.speed select { font: inherit; text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; }
+
+.fleet-live { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+#fleet-live { display: flex; flex-direction: column; gap: 8px; }
+.lv { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 10px; align-items: start; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+.lv[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--vc); border-color: var(--vc); }
+.lv.off { opacity: .55; }
+.lv .lv-name { font-weight: 700; display: flex; justify-content: space-between; gap: 8px; }
+.lv .lv-name small { font-weight: 500; color: var(--muted); font-size: 12px; white-space: nowrap; }
+.lv > span:last-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lv .lv-status { font-size: 13.5px; }
+.lv .lv-next { font-size: 12.5px; color: var(--muted); }
+.lv .pill { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: color-mix(in srgb, var(--vc) 18%, transparent); color: var(--ink); margin-right: 4px; }
+.map-legend { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.map-legend i { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; vertical-align: -2px; }
+.lg-veh { background: var(--s1); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line); }
+.lg-aboard { background: var(--surface); border: 3px solid var(--s1); }
+.lg-wait { border: 2px solid var(--m-pin-stay); box-shadow: 0 0 0 3px color-mix(in srgb, var(--m-pin-stay) 30%, transparent); }
+.lg-here { background: var(--m-pin-venue); box-shadow: 0 0 0 4px color-mix(in srgb, var(--m-pin-venue) 30%, transparent); }
+.hint.small { font-size: 12.5px; }
+
+/* SVG map styling */
+#map .water { fill: var(--m-water); }
+#map .park { fill: var(--m-park); }
+#map .block { fill: var(--m-block); }
+#map .road-case { stroke: var(--m-road-case); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#map .road { stroke: var(--m-road); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#map .hwy-case { stroke: var(--m-hwy-case); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#map .hwy { stroke: var(--m-hwy); fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#map text { font-family: var(--body); paint-order: stroke; stroke: var(--m-halo); stroke-width: .25em; stroke-linejoin: round; }
+#map .pin-lbl { font-size: 12px; stroke-width: 3px; font-weight: 600; fill: var(--m-label-strong); }
+#map .pin-sub { font-size: 10.5px; stroke-width: 3px; font-weight: 700; }
+#map .lbl-street { fill: var(--m-label); font-size: 0.82em; }
+#map .lbl-water { fill: var(--m-water-ink); stroke: none; font-style: italic; font-size: 1em; letter-spacing: .12em; }
+#map .lbl-town { fill: var(--m-label-strong); font-weight: 700; letter-spacing: .18em; font-size: 1.05em; }
+#map .lbl-note { fill: var(--m-label); font-size: .85em; font-style: italic; }
+#map .route-line { fill: none; stroke-linecap: round; stroke-linejoin: round; opacity: .75; }
+#map .pin-dot { stroke: var(--m-halo); }
+#map .pin-ring { fill: none; opacity: 0; }
+#map .pin.waiting .pin-ring { opacity: 1; animation: ring 1.6s ease-out infinite; }
+#map .pin-here { opacity: 0; }
+#map .pin.here .pin-here { opacity: 1; }
+#map .veh-body { stroke: var(--m-halo); }
+#map .veh-num { fill: var(--m-halo); stroke: none; font-weight: 700; text-anchor: middle; dominant-baseline: central; font-size: 11px; }
+#map .veh-ring { fill: none; }
+#map .veh { cursor: pointer; }
+#map .veh-shadow { fill: var(--m-shadow); }
+@keyframes ring { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { #map .pin.waiting .pin-ring { animation: none; } }
+
+@media (max-width: 860px) {
+  .live-grid { grid-template-columns: minmax(0, 1fr); }
+  .map-box { height: 460px; }
+}
+@media (max-width: 560px) {
+  .map-box { height: 420px; }
+  .map-clock .clock { font-size: 21px; }
+  .map-zoom { top: auto; bottom: 10px; right: 10px; }
+  .player { grid-template-columns: auto minmax(0, 1fr); }
+  .speed { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 8px; }
+  .scrub-mark { font-size: 9.5px; }
+}
 </style>
 
 </head>
@@ -262,6 +381,61 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
     <div class="routes" id="routes"></div>
   </section>
 
+  <section aria-labelledby="h-map" class="live">
+    <div class="sec-head">
+      <h2 id="h-map">Watch the day play out</h2>
+      <p class="hint">Press play or drag the slider to move through time.</p>
+    </div>
+    <div class="live-days" role="tablist" aria-label="Map day">
+      <button class="chip" data-mapday="friday" id="mapday-friday">Friday</button>
+      <button class="chip" data-mapday="saturday" id="mapday-saturday">Saturday</button>
+    </div>
+    <div class="live-grid">
+      <div class="map-card">
+        <div class="map-box" id="map-box">
+          <svg id="map" role="img" aria-label="Map of shuttle positions in Hudson and Coxsackie" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="map-clock" aria-live="off">
+            <span class="clock" id="map-clock">4:30 PM</span>
+            <span class="caption" id="map-caption"></span>
+          </div>
+          <div class="map-zoom" role="group" aria-label="Map view">
+            <button data-cam="auto" id="cam-auto" aria-pressed="true">Auto</button>
+            <button data-cam="hudson" id="cam-hudson" aria-pressed="false">Hudson</button>
+            <button data-cam="all" id="cam-all" aria-pressed="false">Full route</button>
+          </div>
+        </div>
+        <div class="player">
+          <button class="play" id="play" aria-label="Play">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l11-6.5z"/><path class="i-pause" d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+          </button>
+          <div class="scrub">
+            <div class="scrub-marks" id="scrub-marks"></div>
+            <input type="range" id="scrubber" min="0" max="100" step="0.1" value="0" aria-label="Time">
+            <div class="scrub-ends"><span id="scrub-start"></span><span id="scrub-end"></span></div>
+          </div>
+          <label class="speed">
+            <span>Speed</span>
+            <select id="speed">
+              <option value="2">Slow</option>
+              <option value="6" selected>Normal</option>
+              <option value="15">Fast</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <aside class="fleet-live" aria-label="Where each vehicle is">
+        <div id="fleet-live"></div>
+        <div class="map-legend">
+          <span><i class="lg-veh"></i>Shuttle, arrow shows direction</span>
+          <span><i class="lg-aboard"></i>Guests on board</span>
+          <span><i class="lg-wait"></i>Guests waiting for pick-up</span>
+          <span><i class="lg-here"></i>Guests at a venue</span>
+        </div>
+        <p class="hint small">Map is simplified and not to scale. Positions between stops are estimated from the schedule. Tap a vehicle to follow it.</p>
+      </aside>
+    </div>
+  </section>
+
   <footer>
     <span>Shuttles operated by Coxsackie Transport. Schedule version of October 20, 2026.</span>
     <span>Warren St stops are at the corners of 7th, 5th, 3rd and 1st Streets, in that order. The Maker Hotel is steps from the 3rd St stop.</span>
@@ -304,7 +478,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
       band: { start: "18:30", end: "21:00", label: "Welcome dinner" },
       vehicles: ["s1", "s2", "s3"],
       legs: [
-        { v: "s1", kind: "ride", from: [["voco", "17:30"]], to: [["caboose", "18:15"]], note: "Boards at 5:30, departs 5:45 PM." },
+        { v: "s1", kind: "ride", from: [["voco", "17:30", "17:45"]], to: [["caboose", "18:15"]], note: "Boards at 5:30, departs 5:45 PM." },
         { v: "s1", kind: "ride", from: [["navigator", "18:20"]], to: [["caboose", "18:30"]] },
         { v: "s1", kind: "hold", start: "18:30", end: "21:00", note: "Between runs" },
         { v: "s1", kind: "ride", from: [["caboose", "21:00"]], to: [["navigator"], ["voco"]], end: "22:15", note: "Leaves at 9:00 PM, possibly as late as 9:30." },
@@ -339,7 +513,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
         { v: "car", kind: "hold", start: "14:45", end: "15:00", at: "maker", note: "Photos" },
         { v: "car", kind: "ride", who: "Bride & groom", from: [["maker", "15:00"]], to: [["basilica"]], end: "15:15" },
 
-        { v: "s1", kind: "ride", from: [["voco", "11:20"]], to: [["stmarys", "12:00"]], note: "Boards at 11:20, departs 11:30 AM." },
+        { v: "s1", kind: "ride", from: [["voco", "11:20", "11:30"]], to: [["stmarys", "12:00"]], note: "Boards at 11:20, departs 11:30 AM." },
         { v: "s1", kind: "ride", from: [["pocketbook", "12:10"]], to: [["stmarys", "12:20"]] },
         { v: "s1", kind: "hold", start: "12:20", end: "14:00", at: "stmarys", note: "Waits through the ceremony" },
         { v: "s1", kind: "ride", from: [["stmarys", "14:00"]], to: [["basilica", "14:15"]], note: "Drops on the north side. Guests wait at the Basilica for cocktail hour." },
@@ -349,7 +523,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
         { v: "s1", kind: "ride", from: [["basilica", "21:00"]], to: [["voco", "21:30"]], note: "First ride back to Coxsackie." },
         { v: "s1", kind: "ride", from: [["basilica", "22:00"]], to: [["voco", "22:30"]], note: "Last ride back to Coxsackie." },
 
-        { v: "s2", kind: "ride", from: [["pocketbook", "11:40"], ["navigator", "11:55"]], to: [["stmarys", "12:05"]], note: "Departs the Pocketbook at 11:45 AM." },
+        { v: "s2", kind: "ride", from: [["pocketbook", "11:40", "11:45"], ["navigator", "11:55"]], to: [["stmarys", "12:05"]], note: "Departs the Pocketbook at 11:45 AM." },
         { v: "s2", kind: "ride", from: [["warren", "12:15"]], to: [["stmarys", "12:25"]] },
         { v: "s2", kind: "hold", start: "12:25", end: "14:00", at: "stmarys", note: "Waits through the ceremony" },
         { v: "s2", kind: "ride", from: [["stmarys", "14:00"]], to: [["pocketbook"]], end: "14:15" },
@@ -627,6 +801,622 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   });
 
   renderAll();
+  window.SHUTTLE_DATA = { DAYS: DAYS, PLACES: PLACES, VEH: VEH, mins: mins, fmt: fmt, esc: esc, roundel: roundel };
+})();
+</script>
+<script>
+(function () {
+  var SD = window.SHUTTLE_DATA;
+  if (!SD) return;
+  var DAYS = SD.DAYS, PLACES = SD.PLACES, VEH = SD.VEH, mins = SD.mins, fmt = SD.fmt, esc = SD.esc;
+  var NS = "http://www.w3.org/2000/svg";
+
+  // ---- Map geometry (schematic; Hudson's grid straightened, Coxsackie drive compressed) ----
+  var COLS = { F: 300, 1: 360, 2: 420, 3: 480, 4: 540, 5: 600, 6: 660, 7: 720 };
+  var ROWS = { C: 240, W: 300, U: 360, A: 420, Wa: 480 };
+  var N = {};
+  Object.keys(COLS).forEach(function (c) { Object.keys(ROWS).forEach(function (r) { N[c + r] = [COLS[c], ROWS[r]]; }); });
+  Object.assign(N, {
+    caboose: [300, 330], basilica: [300, 392], maker: [497, 300], navigator: [450, 420],
+    stmarys: [570, 420], pocketbook: [630, 480],
+    depot: [58, 60], voco: [110, 98], c1: [134, 150], c2: [144, 300], c3: [124, 450], wb: [142, 592], eb: [292, 604], e1: [334, 545]
+  });
+  var STREETS = [
+    ["FW", "caboose", "FU", "basilica", "FA"],
+    ["FW", "1W", "2W", "3W", "maker", "4W", "5W", "6W", "7W"],
+    ["1C", "2C", "3C", "4C", "5C", "6C", "7C"],
+    ["FU", "1U", "2U", "3U", "4U", "5U", "6U", "7U"],
+    ["FA", "1A", "2A", "navigator", "3A", "4A", "stmarys", "5A", "6A", "7A"],
+    ["1Wa", "2Wa", "3Wa", "4Wa", "5Wa", "pocketbook", "6Wa", "7Wa"]
+  ];
+  [1, 2, 3, 4, 5, 6, 7].forEach(function (c) { STREETS.push([c + "C", c + "W", c + "U", c + "A", c + "Wa"]); });
+  var HIGHWAY = [["depot", "voco", 2], ["voco", "c1", 3], ["c1", "c2", 6], ["c2", "c3", 5], ["c3", "wb", 5], ["wb", "eb", 2], ["eb", "e1", 2], ["e1", "1Wa", 2]];
+
+  var ADJ = {};
+  function link(a, b, w) {
+    (ADJ[a] = ADJ[a] || []).push([b, w]);
+    (ADJ[b] = ADJ[b] || []).push([a, w]);
+  }
+  function dist(a, b) { return Math.hypot(N[a][0] - N[b][0], N[a][1] - N[b][1]); }
+  STREETS.forEach(function (s) { for (var i = 1; i < s.length; i++) link(s[i - 1], s[i], dist(s[i - 1], s[i]) / 50); });
+  HIGHWAY.forEach(function (h) { link(h[0], h[1], h[2]); });
+
+  var routeCache = {};
+  function route(a, b) {
+    var key = a + ">" + b;
+    if (routeCache[key]) return routeCache[key];
+    var d = {}, prev = {}, done = {};
+    Object.keys(N).forEach(function (n) { d[n] = Infinity; });
+    d[a] = 0;
+    for (;;) {
+      var u = null;
+      Object.keys(d).forEach(function (n) { if (!done[n] && d[n] < Infinity && (u === null || d[n] < d[u])) u = n; });
+      if (u === null || u === b) break;
+      done[u] = 1;
+      (ADJ[u] || []).forEach(function (e) { if (d[u] + e[1] < d[e[0]]) { d[e[0]] = d[u] + e[1]; prev[e[0]] = u; } });
+    }
+    var nodes = [b];
+    while (nodes[0] !== a) nodes.unshift(prev[nodes[0]]);
+    var cum = [0];
+    for (var i = 1; i < nodes.length; i++) {
+      var w = (ADJ[nodes[i - 1]].filter(function (e) { return e[0] === nodes[i]; })[0] || [0, 0])[1];
+      cum.push(cum[i - 1] + w);
+    }
+    var r = { nodes: nodes, pts: nodes.map(function (n) { return N[n]; }), cum: cum, total: cum[cum.length - 1] };
+    routeCache[key] = r;
+    return r;
+  }
+  function along(r, m) {
+    if (r.total === 0) return r.pts[0].slice();
+    m = Math.max(0, Math.min(r.total, m));
+    for (var i = 1; i < r.cum.length; i++) {
+      if (m <= r.cum[i]) {
+        var seg = r.cum[i] - r.cum[i - 1] || 1, f = (m - r.cum[i - 1]) / seg;
+        return [r.pts[i - 1][0] + (r.pts[i][0] - r.pts[i - 1][0]) * f, r.pts[i - 1][1] + (r.pts[i][1] - r.pts[i - 1][1]) * f];
+      }
+    }
+    return r.pts[r.pts.length - 1].slice();
+  }
+
+  var NODE_NAMES = { "7W": "Warren & 7th", "5W": "Warren & 5th", "3W": "Warren & 3rd", "1W": "Warren & 1st", "6W": "the groom's pick-up (TBD)", depot: "the depot" };
+  function nodeName(n) { return NODE_NAMES[n] || (PLACES[n] ? PLACES[n].name : n); }
+  function expand(p) {
+    if (p === "warren") return ["7W", "5W", "3W", "1W"];
+    if (p === "hudson") return ["navigator", "3W", "5W", "pocketbook"];
+    if (p === "tbd") return ["6W"];
+    return [p];
+  }
+
+  // Leave-depot windows from the Coxsackie Transport reservations.
+  var DEPOT = {
+    friday: { s1: [["17:15", "22:45"]], s2: [["16:30", "22:30"]], s3: [["17:30", "23:30"]] },
+    saturday: {
+      car: [["11:30", "16:00"]],
+      s1: [["11:00", "16:15"], ["20:30", "22:45"]],
+      s2: [["11:00", "16:30"], ["20:30", "23:30"]],
+      s3: [["11:00", "16:30"], ["20:30", "23:30"]]
+    }
+  };
+  var CAPTIONS = {
+    friday: [["0:00", "Shuttles are at the depot in Coxsackie"], ["16:30", "Shuttle 2 heads to Hudson for the wedding party"], ["17:10", "Picking up the wedding party"],
+      ["17:30", "Coxsackie guests board at voco"], ["17:40", "Wedding party at St. Mary's"], ["18:00", "Hudson guests head to The Caboose"], ["18:45", "Welcome dinner at The Caboose"],
+      ["21:00", "Rides home from The Caboose"], ["22:30", "Last rides home; shuttles head back to the depot"]],
+    saturday: [["0:00", "Shuttles are at the depot in Coxsackie"], ["11:00", "Shuttles leave the depot"], ["11:20", "Guests head to St. Mary's"], ["12:30", "Ceremony at St. Mary's"],
+      ["14:00", "Guests head to the Basilica or back to their hotels"], ["15:00", "Final runs to the Basilica"], ["16:00", "Reception. Shuttles off until evening"],
+      ["20:30", "Shuttles head back to Hudson"], ["21:00", "Rides home from the Basilica"], ["22:30", "Last rides home"]]
+  };
+  var MARKS = {
+    friday: [["17:10", "Wedding party"], ["18:30", "Dinner"], ["21:00", "Rides home"]],
+    saturday: [["12:30", "Ceremony"], ["14:00", "Basilica"], ["21:00", "Rides home"]]
+  };
+
+  // ---- Simulation: turn each vehicle's legs into timed move/stay segments ----
+  function rideStops(l) {
+    var st = [];
+    function add(list, pu) {
+      list.forEach(function (x) {
+        expand(x[0]).forEach(function (n, i) {
+          var t = i === 0 && x[1] ? mins(x[1]) : null, dep = i === 0 && x[2] ? mins(x[2]) : null;
+          var last = st[st.length - 1];
+          if (last && last.n === n) { if (t !== null && last.t === null) last.t = t; return; }
+          st.push({ n: n, t: t, dep: dep, pu: pu, place: x[0] });
+        });
+      });
+    }
+    add(l.from, true); add(l.to, false);
+    if (st[st.length - 1].t === null) st[st.length - 1].t = l.e;
+    var i = 0;
+    while (i < st.length - 1) {
+      var j = i + 1;
+      while (st[j].t === null) j++;
+      if (j > i + 1) {
+        var legs = [], tot = 0;
+        for (var k = i; k < j; k++) { var m = route(st[k].n, st[k + 1].n).total + 1; legs.push(m); tot += m; }
+        var acc = 0;
+        for (k = i + 1; k < j; k++) { acc += legs[k - i - 1]; st[k].t = st[i].t + (st[j].t - st[i].t) * acc / tot; }
+      }
+      i = j;
+    }
+    return st;
+  }
+  function loopStops(l) {
+    var st = [];
+    [[l.from, true], [l.to, false]].forEach(function (g) {
+      g[0].forEach(function (x) {
+        expand(x[0]).forEach(function (n) {
+          if (st.length && st[st.length - 1].n === n) return;
+          st.push({ n: n, pu: g[1], place: x[0] });
+        });
+      });
+    });
+    return st;
+  }
+
+  function buildVehicle(day, v) {
+    var legs = DAYS[day].legs.filter(function (l) { return l.v === v && l.kind !== "hold"; });
+    var segs = [];
+    DEPOT[day][v].forEach(function (w) {
+      var w0 = mins(w[0]), w1 = mins(w[1]);
+      var cur = { n: "depot", t: w0 };
+      legs.filter(function (l) { return l.s >= w0 && l.s <= w1; }).forEach(function (l) {
+        var st = l.kind === "ride" ? rideStops(l) : loopStops(l);
+        cur = deadhead(segs, cur, st[0].n, l.s);
+        cur = l.kind === "ride" ? runRide(segs, st, l) : runLoop(segs, st, l, cur);
+      });
+      var r = route(cur.n, "depot");
+      segs.push({ kind: "move", t0: cur.t, t1: cur.t + r.total, r: r, carrying: false, to: "depot", back: true });
+    });
+    return segs;
+  }
+  function deadhead(segs, cur, n, t) {
+    if (cur.n === n) {
+      if (cur.t < t) segs.push({ kind: "stay", n: n, t0: cur.t, t1: t });
+      return { n: n, t: Math.max(cur.t, t) };
+    }
+    var r = route(cur.n, n);
+    var dep = cur.n === "depot" ? cur.t : Math.max(cur.t, t - r.total);
+    var arr = Math.max(dep + 0.3, Math.min(dep + r.total, t));
+    if (cur.t < dep) segs.push({ kind: "stay", n: cur.n, t0: cur.t, t1: dep });
+    segs.push({ kind: "move", t0: dep, t1: arr, r: r, carrying: false, to: n });
+    if (arr < t) segs.push({ kind: "stay", n: n, t0: arr, t1: t, waitFor: true });
+    return { n: n, t: Math.max(arr, t) };
+  }
+  function runRide(segs, st, l) {
+    var end = st[0].t;
+    for (var i = 0; i < st.length; i++) {
+      var s = st[i], nx = st[i + 1];
+      var dwellEnd = s.dep != null ? s.dep : nx ? s.t + Math.min(1.5, 0.35 * Math.max(0.2, nx.t - s.t)) : s.t + 1.5;
+      segs.push({ kind: "stay", n: s.n, t0: s.t, t1: dwellEnd, stop: s.pu ? "pu" : "do", leg: l });
+      if (nx) {
+        var t1 = Math.max(nx.t, dwellEnd + 0.3);
+        segs.push({ kind: "move", t0: dwellEnd, t1: t1, r: route(s.n, nx.n), carrying: true, to: nx.n, leg: l });
+        nx.t = t1;
+      }
+      end = dwellEnd;
+    }
+    return { n: st[st.length - 1].n, t: end };
+  }
+  function runLoop(segs, st, l, cur) {
+    var dwell = 1.5, out = 0;
+    for (var i = 1; i < st.length; i++) out += route(st[i - 1].n, st[i].n).total;
+    var anchor = null;
+    l.to.forEach(function (x) { if (x[1]) anchor = mins(x[1]); });
+    var factor = anchor ? Math.max(1, Math.min(3, (anchor - l.s - dwell * (st.length - 1)) / (out || 1))) : 1.8;
+    var t = Math.max(cur.t, l.s), at = st[0].n;
+    for (;;) {
+      for (i = 0; i < st.length; i++) {
+        segs.push({ kind: "stay", n: st[i].n, t0: t, t1: t + dwell, stop: st[i].pu ? "pu" : "do", leg: l });
+        t += dwell; at = st[i].n;
+        if (i < st.length - 1) {
+          var r = route(st[i].n, st[i + 1].n), d = r.total * factor;
+          segs.push({ kind: "move", t0: t, t1: t + d, r: r, carrying: true, to: st[i + 1].n, leg: l });
+          t += d;
+        }
+      }
+      var back = route(at, st[0].n), db = back.total * factor * 0.8;
+      if (t + db > l.e) break;
+      segs.push({ kind: "move", t0: t, t1: t + db, r: back, carrying: false, to: st[0].n, leg: l, returning: true });
+      t += db; at = st[0].n;
+    }
+    return { n: at, t: t };
+  }
+
+  var SIM = {};
+  Object.keys(DAYS).forEach(function (d) {
+    var vs = {};
+    DAYS[d].vehicles.forEach(function (v) { vs[v] = buildVehicle(d, v); });
+    var t0 = Infinity, t1 = 0;
+    Object.keys(vs).forEach(function (v) { vs[v].forEach(function (s) { t0 = Math.min(t0, s.t0); t1 = Math.max(t1, s.t1); }); });
+    // Venue presence: first drop-off to last pick-up at each venue
+    var here = {};
+    Object.keys(vs).forEach(function (v) {
+      vs[v].forEach(function (s) {
+        if (s.kind !== "stay" || !s.stop || !PLACES[s.n] || PLACES[s.n].kind !== "venue") return;
+        var h = here[s.n] = here[s.n] || [Infinity, 0];
+        if (s.stop === "do") h[0] = Math.min(h[0], s.t0);
+        if (s.stop === "pu") h[1] = Math.max(h[1], s.t1);
+      });
+    });
+    SIM[d] = { vs: vs, start: Math.floor((t0 - 10) / 15) * 15, end: Math.ceil((t1 + 5) / 15) * 15, here: here };
+  });
+
+  function ease(f) { return f < 0.5 ? 2 * f * f : 1 - 2 * (1 - f) * (1 - f); }
+  function stateAt(segs, t) {
+    for (var i = 0; i < segs.length; i++) {
+      var s = segs[i];
+      if (t >= s.t0 && t < s.t1) {
+        if (s.kind === "stay") return { seg: s, i: i, pos: N[s.n].slice(), moving: false };
+        var f = ease((t - s.t0) / (s.t1 - s.t0));
+        var p = along(s.r, f * s.r.total), p2 = along(s.r, Math.min(s.r.total, f * s.r.total + 0.15));
+        if (p2[0] === p[0] && p2[1] === p[1]) p2 = along(s.r, s.r.total);
+        return { seg: s, i: i, pos: p, moving: true, ang: Math.atan2(p2[1] - p[1], p2[0] - p[0]), m: f * s.r.total };
+      }
+    }
+    return null;
+  }
+
+  // ---- Build the SVG ----
+  var svg = document.getElementById("map");
+  if (!svg) return;
+  function el(tag, attrs, parent, text) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (text != null) e.textContent = text;
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  var world = el("g", {}, svg);
+  el("rect", { x: -2000, y: -2000, width: 5000, height: 5000, fill: "var(--m-land)" }, world);
+  el("path", { class: "water", d: "M190,-2000 L262,-2000 C262,0 268,80 258,180 C246,300 270,380 262,480 C254,580 266,640 262,2000 L178,2000 C178,640 190,560 196,470 C204,360 176,280 186,180 C196,80 190,0 190,-2000 Z" }, world);
+  var blocks = el("g", {}, world);
+  var cols = ["F", 1, 2, 3, 4, 5, 6, 7], rows = ["C", "W", "U", "A", "Wa"];
+  for (var ci = 1; ci < cols.length - 0; ci++) {
+    for (var ri = 0; ri < rows.length - 1; ri++) {
+      if (ci === 0) continue;
+      var x0 = COLS[cols[ci - 1]], x1 = COLS[cols[ci]], y0 = ROWS[rows[ri]], y1 = ROWS[rows[ri + 1]];
+      if (cols[ci - 1] === "F" && (rows[ri] === "C" || rows[ri] === "A")) continue;
+      el("rect", { class: "block", x: x0 + 8, y: y0 + 8, width: x1 - x0 - 16, height: y1 - y0 - 16, rx: 3 }, blocks);
+    }
+  }
+  [[728, 248, 46, 44], [728, 308, 46, 44], [728, 368, 46, 44], [728, 428, 46, 44]].forEach(function (b, i) {
+    el("rect", { class: i === 1 ? "park" : "block", x: b[0], y: b[1], width: b[2], height: b[3], rx: 3 }, blocks);
+  });
+  // Coxsackie blocks
+  [[20, 76, 70, 14], [70, 112, 30, 40], [22, 112, 40, 40], [150, 70, 30, 60]].forEach(function (b) {
+    el("rect", { class: "block", x: b[0], y: b[1], width: b[2], height: b[3], rx: 3 }, blocks);
+  });
+  var roadsCase = el("g", {}, world), roads = el("g", {}, world);
+  function poly(ids) { return ids.map(function (n, i) { return (i ? "L" : "M") + N[n][0] + "," + N[n][1]; }).join(" "); }
+  var hwyD = poly(["depot", "voco", "c1", "c2", "c3", "wb", "eb", "e1", "1Wa"]);
+  el("path", { class: "hwy-case", d: hwyD, "stroke-width": 15 }, roadsCase);
+  el("path", { class: "hwy", d: hwyD, "stroke-width": 11 }, roads);
+  STREETS.forEach(function (s) {
+    var d = poly(s);
+    el("path", { class: "road-case", d: d, "stroke-width": 11 }, roadsCase);
+    el("path", { class: "road", d: d, "stroke-width": 8 }, roads);
+  });
+  [["M18,98 L180,98"], ["M66,60 L66,170"]].forEach(function (p) {
+    el("path", { class: "road-case", d: p[0], "stroke-width": 9 }, roadsCase);
+    el("path", { class: "road", d: p[0], "stroke-width": 6 }, roads);
+  });
+
+  var labels = el("g", {}, world);
+  [["Warren St", 690, 294], ["Union St", 690, 354], ["Allen St", 390, 414], ["Columbia St", 690, 234], ["Washington St", 420, 474]].forEach(function (l) {
+    el("text", { class: "lbl-street", x: l[1], y: l[2], "text-anchor": "middle" }, labels, l[0]);
+  });
+  ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th"].forEach(function (s, i) {
+    el("text", { class: "lbl-street", x: COLS[i + 1], y: 504, "text-anchor": "middle" }, labels, s);
+  });
+  el("text", { class: "lbl-street", x: 0, y: 0, transform: "translate(292,370) rotate(-90)", "text-anchor": "middle" }, labels, "Front St");
+  el("text", { class: "lbl-water", x: 0, y: 0, transform: "translate(226,340) rotate(-86)", "text-anchor": "middle" }, labels, "HUDSON RIVER");
+  el("text", { class: "lbl-town", x: 520, y: 206, "text-anchor": "middle" }, labels, "HUDSON");
+  el("text", { class: "lbl-town", x: 100, y: 34, "text-anchor": "middle" }, labels, "COXSACKIE");
+  el("text", { class: "lbl-town", x: 70, y: 600, "text-anchor": "middle" }, labels, "CATSKILL");
+  el("text", { class: "lbl-note", x: 220, y: 632, "text-anchor": "middle" }, labels, "Rip Van Winkle Bridge");
+  el("text", { class: "lbl-note", x: 0, y: 0, transform: "translate(160,380) rotate(-90)", "text-anchor": "middle" }, labels, "Route 9W · about 30 min");
+  el("text", { class: "lbl-street", x: 744, y: 324, "text-anchor": "middle" }, labels, "Park");
+
+  var routesLayer = el("g", {}, world);
+  var pinsLayer = el("g", {}, world);
+  var vehLayer = el("g", {}, world);
+
+  var PIN_DEFS = [
+    ["depot", "Depot", "stay", "above"], ["voco", "voco", "stay", "right"],
+    ["pocketbook", "Pocketbook", "stay", "below"], ["navigator", "Navigator", "stay", "below"], ["maker", "The Maker", "stay", "above"],
+    ["7W", "", "stop"], ["5W", "", "stop"], ["3W", "", "stop"], ["1W", "", "stop"],
+    ["stmarys", "St. Mary's", "venue", "below"], ["caboose", "The Caboose", "venue", "right"], ["basilica", "Basilica Hudson", "venue", "right"]
+  ];
+  var pins = {};
+  PIN_DEFS.forEach(function (p) {
+    var g = el("g", { class: "pin pin-" + p[2] }, pinsLayer);
+    var color = p[2] === "venue" ? "var(--m-pin-venue)" : "var(--m-pin-stay)";
+    var r = p[2] === "stop" ? 4.5 : 7;
+    el("circle", { class: "pin-here", r: 15, fill: color, "fill-opacity": 0.22 }, g);
+    el("circle", { class: "pin-ring", r: 12, stroke: color, "stroke-width": 2.5, style: "transform-box: fill-box; transform-origin: center" }, g);
+    el("circle", { class: "pin-dot", r: r, fill: p[0] === "depot" ? "var(--m-label)" : color, "stroke-width": 2 }, g);
+    var lbl = null, sub = null;
+    if (p[1]) {
+      var pos = { right: [12, 4, "start"], left: [-12, 4, "end"], below: [0, 22, "middle"], above: [0, -13, "middle"] }[p[3]];
+      lbl = el("text", { class: "pin-lbl", x: pos[0], y: pos[1], "text-anchor": pos[2] }, g, p[1]);
+      sub = el("text", { class: "pin-sub", x: pos[0], y: pos[1] + 13, "text-anchor": pos[2], style: "fill:" + color }, g, "");
+    }
+    pins[p[0]] = { g: g, lbl: lbl, sub: sub, kind: p[2] };
+  });
+
+  var CAR_PATH = "M5 11l1.6-4.2A2 2 0 0 1 8.5 5.5h7a2 2 0 0 1 1.9 1.3L19 11h.5A1.5 1.5 0 0 1 21 12.5V17h-2v1.5a1 1 0 0 1-2 0V17H7v1.5a1 1 0 0 1-2 0V17H3v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.2 0h9.6l-1.2-3.3a.5.5 0 0 0-.5-.3H8.9a.5.5 0 0 0-.5.3L7.2 11z";
+  var vehEls = {};
+  Object.keys(VEH).forEach(function (v) {
+    var V = VEH[v];
+    var g = el("g", { class: "veh", "data-follow": v, opacity: 0 }, vehLayer);
+    var route = el("path", { class: "route-line", stroke: V.color, "stroke-width": 4 }, routesLayer);
+    el("ellipse", { class: "veh-shadow", cx: 0, cy: 3, rx: 12, ry: 6 }, g);
+    var ring = el("circle", { class: "veh-ring", r: 16.5, stroke: V.color, "stroke-width": 3.5, opacity: 0 }, g);
+    var arrow = el("path", { d: "M17,0 L10,-6 L10,6 Z", fill: V.color, opacity: 0 }, g);
+    el("circle", { class: "veh-body", r: 11.5, fill: V.color, "stroke-width": 2.5 }, g);
+    if (V.mark === "car") el("path", { d: CAR_PATH, transform: "translate(-8,-8.5) scale(.667)", fill: "var(--m-halo)" }, g);
+    else el("text", { class: "veh-num", x: 0, y: 0.5 }, g, V.mark);
+    vehEls[v] = { g: g, ring: ring, arrow: arrow, route: route, x: null, y: null };
+  });
+
+  // ---- UI state ----
+  var ui = {
+    day: "friday", t: mins("17:25"), playing: false, speed: 6, cam: "auto", follow: null,
+    box: null, last: 0
+  };
+  var START_T = { friday: mins("17:25"), saturday: mins("11:50") };
+  var scrub = document.getElementById("scrubber"), clock = document.getElementById("map-clock"), caption = document.getElementById("map-caption");
+  var playBtn = document.getElementById("play"), box = document.getElementById("map-box");
+  var fleetLive = document.getElementById("fleet-live");
+  var rowEls = {};
+
+  function setDay(d, keepT) {
+    ui.day = d;
+    var S = SIM[d];
+    scrub.min = S.start; scrub.max = S.end;
+    if (!keepT) ui.t = START_T[d];
+    document.getElementById("scrub-start").textContent = fmt(S.start);
+    document.getElementById("scrub-end").textContent = fmt(S.end);
+    var lastP = -100, row = 0;
+    document.getElementById("scrub-marks").innerHTML = MARKS[d].map(function (m) {
+      var p = (mins(m[0]) - S.start) / (S.end - S.start) * 100;
+      row = p - lastP < 20 ? 1 - row : 0;
+      lastP = p;
+      return '<button class="scrub-mark' + (row ? " up" : "") + '" data-jump="' + mins(m[0]) + '" style="left:' + p + '%">' + esc(m[1]) + "</button>";
+    }).join("");
+    document.querySelectorAll("[data-mapday]").forEach(function (b) { b.setAttribute("aria-selected", b.dataset.mapday === d ? "true" : "false"); });
+    Object.keys(vehEls).forEach(function (v) { vehEls[v].x = null; });
+    if (ui.follow && DAYS[d].vehicles.indexOf(ui.follow) < 0) ui.follow = null;
+    fleetLive.innerHTML = DAYS[d].vehicles.map(function (v) {
+      var V = VEH[v];
+      return '<button class="lv" data-follow="' + v + '" style="--vc:' + V.color + '" aria-pressed="false">' + SD.roundel(v) +
+        '<span><span class="lv-name">' + V.label + "<small>" + V.seats + ' seats</small></span><span class="lv-status"></span><span class="lv-next"></span></span></button>';
+    }).join("");
+    rowEls = {};
+    fleetLive.querySelectorAll(".lv").forEach(function (b) {
+      rowEls[b.dataset.follow] = { b: b, st: b.querySelector(".lv-status"), nx: b.querySelector(".lv-next"), cache: "" };
+    });
+  }
+
+  function holdNote(v, t) {
+    var h = DAYS[ui.day].legs.filter(function (l) { return l.v === v && l.kind === "hold" && t >= l.s && t < l.e; })[0];
+    return h ? h.note : null;
+  }
+  function status(v, st, t) {
+    var segs = SIM[ui.day].vs[v];
+    if (!st) {
+      var nextLeave = segs.filter(function (s) { return s.t0 > t; })[0];
+      var any = segs.some(function (s) { return s.t1 <= t; });
+      if (nextLeave) return { off: true, text: any ? "Off duty at the depot" : "At the depot in Coxsackie", next: "Leaves at " + fmt(Math.round(nextLeave.t0)) };
+      return { off: true, text: "Done for the day", next: "" };
+    }
+    var s = st.seg, who = s.leg && s.leg.who ? s.leg.who.toLowerCase() : "guests", text;
+    if (s.kind === "move") {
+      if (s.back) text = "Heading back to the depot";
+      else if (s.carrying) text = '<span class="pill">On board</span>Taking ' + esc(who) + " to " + esc(nodeName(s.to));
+      else if (s.returning) text = "Heading back to " + esc(nodeName(s.to)) + " for more guests";
+      else text = "Driving to " + esc(nodeName(s.to));
+    } else if (s.stop === "pu") text = "Picking up " + esc(who) + " at " + esc(nodeName(s.n));
+    else if (s.stop === "do") text = "Dropping off at " + esc(nodeName(s.n));
+    else text = esc(holdNote(v, t) || "Waiting") + " · " + esc(nodeName(s.n));
+    var nx = null;
+    for (var i = st.i + 1; i < segs.length; i++) if (segs[i].kind === "stay" && segs[i].stop) { nx = segs[i]; break; }
+    var next = nx ? "Next: " + (nx.stop === "pu" ? "pick up at " : "drop off at ") + nodeName(nx.n) + " · " + fmt(Math.round(nx.t0)) : "";
+    return { off: false, text: text, next: next };
+  }
+
+  function caption_(t) {
+    var c = "";
+    CAPTIONS[ui.day].forEach(function (x) { if (mins(x[0]) <= t) c = x[1]; });
+    return c;
+  }
+
+  var BOX = { hudson: [262, 180, 506, 340], all: [-10, -70, 810, 720] };
+  function fit(b) {
+    var W = box.clientWidth || 800, H = box.clientHeight || 500, A = W / H;
+    var x = b[0], y = b[1], w = b[2], h = b[3], cx = x + w / 2, cy = y + h / 2;
+    if (w / h < A) w = h * A; else h = w / A;
+    return [cx - w / 2, cy - h / 2, w, h];
+  }
+
+  function frame(now) {
+    var dt = ui.last ? Math.min(0.1, (now - ui.last) / 1000) : 0;
+    ui.last = now;
+    var S = SIM[ui.day];
+    if (ui.playing) {
+      ui.t += dt * ui.speed;
+      // Skip stretches when every vehicle is parked at the depot
+      var anyOn = DAYS[ui.day].vehicles.some(function (v) { return stateAt(S.vs[v], ui.t); });
+      if (!anyOn) {
+        var nxt = Infinity;
+        DAYS[ui.day].vehicles.forEach(function (v) { S.vs[v].forEach(function (s) { if (s.t0 > ui.t) nxt = Math.min(nxt, s.t0); }); });
+        if (nxt < Infinity) ui.t = nxt;
+      }
+      if (ui.t >= S.end) { ui.t = S.end; setPlaying(false); }
+    }
+    render(dt);
+    requestAnimationFrame(frame);
+  }
+
+  function render(dt) {
+    var S = SIM[ui.day], t = ui.t;
+    if (document.activeElement !== scrub || !scrub.matches(":active")) scrub.value = t;
+    clock.textContent = fmt(Math.floor(t));
+    var cap = caption_(t);
+    if (caption.textContent !== cap) caption.textContent = cap;
+
+    // Vehicle states
+    var states = {}, visible = [];
+    Object.keys(vehEls).forEach(function (v) {
+      var on = DAYS[ui.day].vehicles.indexOf(v) >= 0;
+      states[v] = on ? stateAt(S.vs[v], t) : null;
+      if (states[v]) visible.push(v);
+    });
+
+    // Camera
+    var target;
+    if (ui.follow && states[ui.follow]) {
+      var fp = states[ui.follow].pos;
+      target = states[ui.follow].pos[0] < 250 ? [fp[0] - 260, fp[1] - 200, 520, 400] : [fp[0] - 250, fp[1] - 160, 500, 320];
+    } else if (ui.cam === "all") target = BOX.all;
+    else if (ui.cam === "hudson") target = BOX.hudson;
+    else target = visible.some(function (v) { return states[v].pos[0] < 262 || states[v].pos[1] > 540; }) ? BOX.all : BOX.hudson;
+    target = fit(target);
+    if (!ui.box) ui.box = target.slice();
+    var k = dt ? 1 - Math.pow(0.02, dt) : 1;
+    for (var i = 0; i < 4; i++) ui.box[i] += (target[i] - ui.box[i]) * k;
+    svg.setAttribute("viewBox", ui.box.map(function (n) { return n.toFixed(2); }).join(" "));
+    var sc = ui.box[2] / (box.clientWidth || 800);
+    world.style.fontSize = (12 * sc) + "px";
+    var far = sc > 1.4;
+
+    // Pins
+    var waiting = {};
+    Object.keys(S.vs).forEach(function (v) {
+      S.vs[v].forEach(function (s) {
+        if (s.kind === "stay" && s.stop === "pu" && t >= s.t0 - 12 && t < s.t1) waiting[s.n] = 1;
+      });
+    });
+    Object.keys(pins).forEach(function (n) {
+      var p = pins[n], P = N[n];
+      p.g.setAttribute("transform", "translate(" + P[0] + "," + P[1] + ") scale(" + sc + ")");
+      p.g.classList.toggle("waiting", !!waiting[n]);
+      var h = S.here[n], isHere = h && t >= h[0] && t < h[1];
+      p.g.classList.toggle("here", !!isHere);
+      if (p.sub) {
+        var subText = isHere ? (ui.day === "friday" && n === "stmarys" ? "Wedding party here" : "Guests here") : waiting[n] && p.kind !== "venue" ? "Guests waiting" : "";
+        if (p.sub.textContent !== subText) p.sub.textContent = subText;
+      }
+      if (p.lbl) {
+        var hide = far && n !== "voco" && n !== "depot";
+        p.lbl.style.display = hide ? "none" : "";
+        p.sub.style.display = hide ? "none" : "";
+      }
+    });
+
+    // Vehicles: target positions, then spread out any that overlap
+    var pos = {};
+    visible.forEach(function (v) { pos[v] = states[v].pos.slice(); });
+    var minD = 22 * sc;
+    for (var a = 0; a < visible.length; a++) {
+      var cluster = [visible[a]];
+      for (var b = a + 1; b < visible.length; b++) {
+        var pa = states[visible[a]].pos, pb = states[visible[b]].pos;
+        if (Math.hypot(pa[0] - pb[0], pa[1] - pb[1]) < minD) cluster.push(visible[b]);
+      }
+      if (cluster.length > 1 && !cluster.some(function (c) { return pos[c].spread; })) {
+        var cx = 0, cy = 0;
+        cluster.forEach(function (c) { cx += states[c].pos[0]; cy += states[c].pos[1]; });
+        cx /= cluster.length; cy /= cluster.length;
+        cluster.forEach(function (c, i) {
+          var ang = -Math.PI / 2 + i * 2 * Math.PI / cluster.length;
+          pos[c] = [cx + Math.cos(ang) * 15 * sc, cy + Math.sin(ang) * 15 * sc];
+          pos[c].spread = true;
+        });
+      }
+    }
+    Object.keys(vehEls).forEach(function (v) {
+      var E = vehEls[v], st = states[v];
+      if (!st) {
+        E.g.setAttribute("opacity", 0);
+        E.g.style.pointerEvents = "none";
+        E.route.setAttribute("d", "");
+        E.x = null;
+        return;
+      }
+      var p = pos[v];
+      if (E.x === null || !dt) { E.x = p[0]; E.y = p[1]; }
+      else { var kk = 1 - Math.pow(0.0005, dt); E.x += (p[0] - E.x) * kk; E.y += (p[1] - E.y) * kk; }
+      E.g.setAttribute("opacity", 1);
+      E.g.style.pointerEvents = "";
+      E.g.setAttribute("transform", "translate(" + E.x.toFixed(2) + "," + E.y.toFixed(2) + ") scale(" + sc + ")");
+      E.arrow.setAttribute("opacity", st.moving ? 1 : 0);
+      if (st.moving) E.arrow.setAttribute("transform", "rotate(" + (st.ang * 180 / Math.PI).toFixed(1) + ")");
+      E.ring.setAttribute("opacity", st.moving && st.seg.carrying ? 0.55 : 0);
+      if (st.moving && !st.seg.back) {
+        var r = st.seg.r, pts = [st.pos];
+        for (var j = 0; j < r.cum.length; j++) if (r.cum[j] > st.m) pts.push(r.pts[j]);
+        E.route.setAttribute("d", pts.map(function (q, j) { return (j ? "L" : "M") + q[0].toFixed(1) + "," + q[1].toFixed(1); }).join(" "));
+        E.route.setAttribute("stroke-width", 5 * sc);
+        E.route.setAttribute("stroke-dasharray", st.seg.carrying ? "none" : (6 * sc) + " " + (6 * sc));
+        E.route.style.opacity = ui.follow && ui.follow !== v ? 0.2 : 0.75;
+      } else E.route.setAttribute("d", "");
+      E.g.style.opacity = ui.follow && ui.follow !== v ? 0.45 : 1;
+    });
+    // keep the followed vehicle on top
+    if (ui.follow && vehEls[ui.follow]) vehLayer.appendChild(vehEls[ui.follow].g);
+
+    // Side panel
+    DAYS[ui.day].vehicles.forEach(function (v) {
+      var R = rowEls[v];
+      if (!R) return;
+      var s = status(v, states[v], t), key = s.text + "|" + s.next + "|" + s.off + "|" + (ui.follow === v);
+      if (R.cache === key) return;
+      R.cache = key;
+      R.st.innerHTML = s.text;
+      R.nx.textContent = s.next;
+      R.b.classList.toggle("off", s.off);
+      R.b.setAttribute("aria-pressed", ui.follow === v ? "true" : "false");
+    });
+  }
+
+  function setPlaying(on) {
+    ui.playing = on;
+    playBtn.classList.toggle("on", on);
+    playBtn.setAttribute("aria-label", on ? "Pause" : "Play");
+  }
+  function setCam(c) {
+    ui.cam = c; ui.follow = null;
+    document.querySelectorAll("[data-cam]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.cam === c ? "true" : "false"); });
+  }
+
+  playBtn.addEventListener("click", function () {
+    if (!ui.playing && ui.t >= SIM[ui.day].end - 0.5) ui.t = SIM[ui.day].start;
+    setPlaying(!ui.playing);
+  });
+  scrub.addEventListener("input", function () { ui.t = +scrub.value; });
+  document.getElementById("speed").addEventListener("change", function (e) { ui.speed = +e.target.value; });
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest("[data-mapday],[data-cam],[data-jump],[data-follow],[data-day]");
+    if (!t) return;
+    if (t.dataset.mapday) setDay(t.dataset.mapday);
+    else if (t.dataset.day) setDay(t.dataset.day);
+    else if (t.dataset.cam) setCam(t.dataset.cam);
+    else if (t.dataset.jump) ui.t = +t.dataset.jump;
+    else if (t.dataset.follow) {
+      ui.follow = ui.follow === t.dataset.follow ? null : t.dataset.follow;
+      if (ui.follow) document.querySelectorAll("[data-cam]").forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
+      else setCam(ui.cam);
+    }
+  });
+  svg.addEventListener("click", function (ev) {
+    if (!ev.target.closest(".veh")) { if (ui.follow) { ui.follow = null; setCam(ui.cam); } }
+  });
+
+  var initialDay = (location.hash || "").replace("#", "");
+  setDay(DAYS[initialDay] ? initialDay : (document.querySelector('.day[aria-selected="true"]') || { dataset: { day: "friday" } }).dataset.day);
+  render(0);
+  requestAnimationFrame(frame);
+  window.__shuttleMap = ui;
 })();
 </script>
 </body>
