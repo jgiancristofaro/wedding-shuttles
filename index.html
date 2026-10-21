@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Shuttle schedule for Caroline & Joe's wedding weekend in Hudson, NY, December 4–5, 2026.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Caroline &amp; Joe Shuttles</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,600;1,6..96,500&family=Instrument+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a transit-style departure board for two days, with route roundels, a vehicle timeline, and per-shuttle route cards. */
+:root {
+  --bg: #eef1f4;
+  --surface: #ffffff;
+  --sunk: #e4e8ed;
+  --ink: #16202c;
+  --muted: #5a6675;
+  --line: #d3d9e0;
+  --accent: #1d3a5c;
+  --accent-ink: #ffffff;
+  --s1: #0d7a70;
+  --s2: #8b3a77;
+  --s3: #a8670a;
+  --car: #2b3139;
+  --hold: #c4ccd5;
+  --warn-bg: #fdf3dc;
+  --warn-ink: #7a5300;
+  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1319; --surface: #161d25; --sunk: #1d2630; --ink: #e7ecf1; --muted: #9ba7b5; --line: #2b3542;
+    --accent: #a9c7ea; --accent-ink: #0e1319;
+    --s1: #3cbfb2; --s2: #d888c4; --s3: #e5a84c; --car: #c5ced8; --hold: #3a4554;
+    --warn-bg: #3a2e12; --warn-ink: #f2cf83;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1319; --surface: #161d25; --sunk: #1d2630; --ink: #e7ecf1; --muted: #9ba7b5; --line: #2b3542;
+  --accent: #a9c7ea; --accent-ink: #0e1319;
+  --s1: #3cbfb2; --s2: #d888c4; --s3: #e5a84c; --car: #c5ced8; --hold: #3a4554;
+  --warn-bg: #3a2e12; --warn-ink: #f2cf83;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 64px;
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+a { color: inherit; }
+
+header { display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-family: var(--display); font-weight: 500; font-size: clamp(34px, 6vw, 54px); line-height: 1.05; margin: 0; text-wrap: balance; }
+h1 em { font-style: italic; }
+h2 { font-family: var(--display); font-weight: 500; font-size: 26px; margin: 0; text-wrap: balance; }
+h3 { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; margin: 0; color: var(--muted); font-weight: 600; }
+.lede { color: var(--muted); max-width: 62ch; margin: 4px 0 0; }
+
+/* Day switch */
+.days { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.day {
+  text-align: left; border: 1px solid var(--line); background: var(--surface);
+  border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 2px;
+}
+.day b { font-family: var(--display); font-size: 22px; font-weight: 600; }
+.day span { color: var(--muted); font-size: 13px; }
+.day[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.day[aria-selected="true"] span { color: inherit; opacity: .85; }
+
+/* Event strip */
+.events { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.event { display: flex; flex-direction: column; min-width: 0; }
+.event .when { font-variant-numeric: tabular-nums; font-weight: 600; }
+.event .where { color: var(--muted); font-size: 14px; }
+
+/* Fleet */
+.fleet { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.vcard {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; display: flex; gap: 12px; align-items: center; text-align: left; width: 100%;
+}
+.vcard[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--vc); border-color: var(--vc); }
+.vcard .meta { display: flex; flex-direction: column; min-width: 0; }
+.vcard .name { font-weight: 600; }
+.vcard .sub { color: var(--muted); font-size: 13px; }
+.seats { font-variant-numeric: tabular-nums; }
+.roundel {
+  flex: none; width: 38px; height: 38px; border-radius: 50%;
+  background: var(--vc); color: var(--bg);
+  display: grid; place-items: center; font-weight: 700; font-size: 16px; letter-spacing: -.02em;
+}
+.roundel.sm { width: 26px; height: 26px; font-size: 12px; }
+.roundel svg { width: 20px; height: 20px; }
+.roundel.sm svg { width: 14px; height: 14px; }
+
+section { display: flex; flex-direction: column; gap: 14px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+.hint { color: var(--muted); font-size: 14px; margin: 0; }
+
+/* Place picker */
+.picker { display: flex; flex-direction: column; gap: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chips .lbl { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; width: 64px; }
+.chip {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
+  padding: 7px 14px; font-size: 14px; font-weight: 500;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* Board */
+.board { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.place-info { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+.place-info .pname { font-family: var(--display); font-size: 22px; font-weight: 600; }
+.place-info .paddr { color: var(--muted); font-size: 14px; }
+.place-info .paddr a { color: var(--accent); }
+.group-title { padding: 10px 18px; background: var(--sunk); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--muted); }
+.row {
+  display: grid; grid-template-columns: 92px 34px minmax(0, 1fr) auto; gap: 14px; align-items: center;
+  padding: 12px 18px; border-top: 1px solid var(--line); width: 100%; background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left;
+}
+.group-title + .row { border-top: 0; }
+.row:hover { background: var(--sunk); }
+.row.dim { opacity: .55; }
+.row .time { font-variant-numeric: tabular-nums; font-weight: 700; font-size: 17px; line-height: 1.2; }
+.row .time small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); }
+.route { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.route .path { font-weight: 600; }
+.route .path .arrow { color: var(--muted); font-weight: 400; padding: 0 4px; }
+.route .note { color: var(--muted); font-size: 13px; }
+.tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; background: var(--warn-bg); color: var(--warn-ink); margin-left: 6px; vertical-align: 1px; }
+.cap { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.cap b { display: block; font-size: 17px; color: var(--ink); }
+.empty { padding: 18px; color: var(--muted); }
+
+/* Timeline */
+.tl-scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.tl { min-width: 760px; padding: 14px 18px 34px; position: relative; }
+.tl-axis, .tl-lane { display: grid; grid-template-columns: 120px 1fr; gap: 12px; align-items: center; }
+.tl-axis .ticks { position: relative; height: 22px; }
+.tick { position: absolute; top: 0; transform: translateX(-50%); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tl-lane { padding-block: 6px; border-top: 1px solid var(--line); }
+.tl-lane .who { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tl-lane .who .meta { display: flex; flex-direction: column; line-height: 1.2; }
+.tl-lane .who .meta span { font-size: 12px; color: var(--muted); }
+.track { position: relative; height: 40px; }
+.gridline { position: absolute; top: -6px; bottom: -6px; width: 1px; background: var(--line); }
+.blk {
+  position: absolute; top: 4px; bottom: 4px; border-radius: 6px; border: 0;
+  background: var(--vc); color: var(--bg); font-size: 11px; font-weight: 600; padding: 0 6px;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-align: left; min-width: 6px;
+}
+.blk.loop { background: repeating-linear-gradient(135deg, var(--vc) 0 8px, color-mix(in srgb, var(--vc) 78%, var(--bg)) 8px 14px); }
+.blk.hold { background: var(--hold); color: var(--ink); top: 14px; bottom: 14px; padding: 0; font-size: 0; }
+.blk.sel { outline: 2px solid var(--ink); outline-offset: 2px; z-index: 2; }
+.marker { position: absolute; top: 34px; bottom: 26px; width: 0; border-left: 2px dashed var(--accent); pointer-events: none; }
+.marker span { position: absolute; bottom: -22px; left: 4px; font-size: 11px; font-weight: 700; color: var(--accent); white-space: nowrap; letter-spacing: .04em; text-transform: uppercase; }
+.band { position: absolute; top: 34px; bottom: 26px; background: color-mix(in srgb, var(--accent) 9%, transparent); pointer-events: none; }
+.band span { position: absolute; bottom: -22px; left: 4px; font-size: 11px; font-weight: 700; color: var(--accent); white-space: nowrap; letter-spacing: .04em; text-transform: uppercase; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 22px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.detail { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--vc, var(--line)); border-radius: 10px; padding: 12px 16px; min-height: 52px; }
+.detail .d-title { font-weight: 700; }
+.detail .d-sub { color: var(--muted); font-size: 14px; }
+
+/* Route cards */
+.routes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+.rcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.rcard header { flex-direction: row; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 3px solid var(--vc); }
+.rcard header .meta { display: flex; flex-direction: column; }
+.rcard header .name { font-weight: 700; font-size: 17px; }
+.rcard header .sub { color: var(--muted); font-size: 13px; }
+.steps { list-style: none; margin: 0; padding: 12px 16px 16px; display: flex; flex-direction: column; }
+.step { display: grid; grid-template-columns: 74px 14px minmax(0, 1fr); gap: 10px; position: relative; padding-bottom: 12px; }
+.step:last-child { padding-bottom: 0; }
+.step .st { font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; text-align: right; padding-top: 1px; }
+.step .dot { position: relative; }
+.step .dot::before { content: ""; position: absolute; left: 3px; top: 6px; width: 8px; height: 8px; border-radius: 50%; background: var(--vc); }
+.step .dot::after { content: ""; position: absolute; left: 6px; top: 16px; bottom: -8px; width: 2px; background: color-mix(in srgb, var(--vc) 35%, transparent); }
+.step:last-child .dot::after { display: none; }
+.step.hold .dot::before { background: var(--surface); border: 2px solid var(--hold); }
+.step.hold .sx { color: var(--muted); font-style: italic; }
+.step .sx { font-size: 14px; min-width: 0; }
+.step .sx .n { color: var(--muted); font-size: 13px; display: block; }
+
+footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+
+@media (max-width: 560px) {
+  .row { grid-template-columns: 70px 28px minmax(0, 1fr); }
+  .row .cap { grid-column: 3; text-align: left; }
+  .row .cap b { display: inline; font-size: 14px; margin-right: 4px; }
+  .row .time { font-size: 15px; }
+  .chips .lbl { width: 100%; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .row, .chip, .day, .vcard, .blk { transition: background-color .15s, opacity .15s, box-shadow .15s; }
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hudson, New York · December 4–5, 2026</div>
+    <h1>Caroline <em>&amp;</em> Joe · Shuttles</h1>
+    <p class="lede">Pick a day, then tap where you're staying to see every shuttle that picks up there and every ride back. Times are scheduled pick-up times; please be outside a few minutes early.</p>
+  </header>
+
+  <div class="days" role="tablist" aria-label="Day">
+    <button class="day" role="tab" id="tab-friday" data-day="friday"><b>Friday, Dec 4</b><span>Welcome dinner at The Caboose</span></button>
+    <button class="day" role="tab" id="tab-saturday" data-day="saturday"><b>Saturday, Dec 5</b><span>Ceremony &amp; reception</span></button>
+  </div>
+
+  <div class="events" id="events"></div>
+
+  <section aria-labelledby="h-board">
+    <div class="sec-head">
+      <h2 id="h-board">Where are you?</h2>
+      <p class="hint">Choose a hotel or venue to filter the board.</p>
+    </div>
+    <div class="picker" id="picker"></div>
+    <div class="board" id="board"></div>
+  </section>
+
+  <section aria-labelledby="h-fleet">
+    <div class="sec-head">
+      <h2 id="h-fleet">The fleet</h2>
+      <p class="hint" id="fleet-total"></p>
+    </div>
+    <div class="fleet" id="fleet"></div>
+  </section>
+
+  <section aria-labelledby="h-tl">
+    <div class="sec-head">
+      <h2 id="h-tl">The day at a glance</h2>
+      <p class="hint">Tap any bar for details.</p>
+    </div>
+    <div class="tl-scroll"><div class="tl" id="timeline"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--muted)"></i>Scheduled run</span>
+      <span><i style="background:repeating-linear-gradient(135deg,var(--muted) 0 5px,var(--hold) 5px 9px)"></i>Continuous loop</span>
+      <span><i style="background:var(--hold)"></i>Waiting on site / between runs</span>
+    </div>
+    <div class="detail" id="detail"><div class="d-sub">Tap a bar above to see its stops.</div></div>
+  </section>
+
+  <section aria-labelledby="h-routes">
+    <div class="sec-head">
+      <h2 id="h-routes">Each shuttle, stop by stop</h2>
+    </div>
+    <div class="routes" id="routes"></div>
+  </section>
+
+  <footer>
+    <span>Shuttles operated by Coxsackie Transport. Schedule version of October 20, 2026.</span>
+    <span>Warren St stops are at the corners of 7th, 5th, 3rd and 1st Streets, in that order. The Maker Hotel is steps from the 3rd St stop.</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var PLACES = {
+    voco:       { name: "voco James Newbury Hotel", short: "voco (Coxsackie)", addr: "60 S River St, Coxsackie", kind: "stay", note: "About 30 minutes from Hudson." },
+    pocketbook: { name: "Pocketbook Hudson", short: "Pocketbook", addr: "549 Washington St, Hudson", kind: "stay" },
+    navigator:  { name: "Hudson Navigator", short: "Navigator", addr: "251 Allen St, Hudson", kind: "stay" },
+    maker:      { name: "The Maker Hotel", short: "The Maker", addr: "302 Warren St, Hudson", kind: "stay", near: "warren", nearNote: "Guests use the Warren St & 3rd stop, steps away." },
+    warren:     { name: "Warren St corners", short: "Warren St", addr: "Warren St at 7th, 5th, 3rd & 1st St, Hudson", kind: "stay", note: "For Airbnbs and other stays in town. The shuttle stops at each corner in order: 7th, 5th, 3rd, then 1st." },
+    stmarys:    { name: "St. Mary's Church", short: "St. Mary's", addr: "429 E Allen St, Hudson", kind: "venue" },
+    caboose:    { name: "The Caboose", short: "The Caboose", addr: "60 S Front St, Hudson", kind: "venue" },
+    basilica:   { name: "Basilica Hudson", short: "Basilica", addr: "110 S Front St, Hudson", kind: "venue", note: "Shuttles drop off on the north side of the building." },
+    hudson:     { name: "Hudson accommodations", short: "Hudson stays" },
+    tbd:        { name: "Location TBD", short: "TBD" }
+  };
+  var HUDSON_STAYS = ["pocketbook", "navigator", "maker", "warren"];
+
+  var VEH = {
+    s1:  { label: "Shuttle 1", mark: "1", seats: 24, type: "24-passenger coach", color: "var(--s1)" },
+    s2:  { label: "Shuttle 2", mark: "2", seats: 24, type: "24-passenger coach", color: "var(--s2)" },
+    s3:  { label: "Shuttle 3", mark: "3", seats: 36, type: "36-passenger coach", color: "var(--s3)" },
+    car: { label: "Black Car", mark: "car", seats: 4, type: "GMC Denali", color: "var(--car)" }
+  };
+
+  // Legs: ride = one scheduled run, loop = repeats over a window, hold = parked / between runs.
+  var DAYS = {
+    friday: {
+      label: "Friday, December 4",
+      range: [17 * 60, 23 * 60],
+      events: [
+        { title: "Wedding party at St. Mary's", when: "5:40 PM", where: "429 E Allen St" },
+        { title: "Welcome dinner", when: "From about 6:15 PM", where: "The Caboose · 60 S Front St" },
+        { title: "Rides home", when: "9:00 – 10:30 PM", where: "From The Caboose" }
+      ],
+      band: { start: "18:30", end: "21:00", label: "Welcome dinner" },
+      vehicles: ["s1", "s2", "s3"],
+      legs: [
+        { v: "s1", kind: "ride", from: [["voco", "17:30"]], to: [["caboose", "18:15"]], note: "Boards at 5:30, departs 5:45 PM." },
+        { v: "s1", kind: "ride", from: [["navigator", "18:20"]], to: [["caboose", "18:30"]] },
+        { v: "s1", kind: "hold", start: "18:30", end: "21:00", note: "Between runs" },
+        { v: "s1", kind: "ride", from: [["caboose", "21:00"]], to: [["navigator"], ["voco"]], end: "22:15", note: "Leaves at 9:00 PM, possibly as late as 9:30." },
+
+        { v: "s2", kind: "ride", who: "Wedding party", from: [["pocketbook", "17:10"], ["maker", "17:20"], ["navigator", "17:30"]], to: [["stmarys", "17:40"]] },
+        { v: "s2", kind: "hold", start: "17:40", end: "18:20", at: "stmarys", note: "Waits at St. Mary's" },
+        { v: "s2", kind: "ride", who: "Wedding party", from: [["stmarys", "18:20"]], to: [["caboose", "18:30"]] },
+        { v: "s2", kind: "hold", start: "18:30", end: "21:00", note: "Between runs" },
+        { v: "s2", kind: "loop", from: [["caboose", "21:00"]], to: [["navigator"], ["maker"], ["pocketbook"]], end: "22:30", note: "Runs back and forth until 10:30 PM." },
+
+        { v: "s3", kind: "ride", from: [["pocketbook", "18:00"], ["warren", "18:10"]], to: [["caboose", "18:25"]] },
+        { v: "s3", kind: "ride", from: [["warren", "18:35"]], to: [["caboose", "18:45"]], note: "Second sweep of Warren St." },
+        { v: "s3", kind: "hold", start: "18:45", end: "21:00", note: "Between runs" },
+        { v: "s3", kind: "loop", from: [["caboose", "21:00"]], to: [["hudson"], ["pocketbook"]], end: "22:30", note: "Runs back and forth to Hudson stays until 10:30 PM." }
+      ]
+    },
+    saturday: {
+      label: "Saturday, December 5",
+      range: [11 * 60, 23 * 60],
+      events: [
+        { title: "Ceremony", when: "12:30 PM", where: "St. Mary's Church · 429 E Allen St" },
+        { title: "To the reception", when: "2:00 – 4:00 PM", where: "Basilica Hudson · 110 S Front St" },
+        { title: "Rides home", when: "9:00 – 10:30 PM", where: "From Basilica Hudson" }
+      ],
+      marker: { at: "12:30", label: "Ceremony" },
+      vehicles: ["car", "s1", "s2", "s3"],
+      legs: [
+        { v: "car", kind: "ride", who: "Groom & parents", from: [["tbd", "12:00"]], to: [["stmarys", "12:10"]] },
+        { v: "car", kind: "ride", who: "Bride & family", from: [["maker", "12:20"]], to: [["stmarys", "12:30"]] },
+        { v: "car", kind: "hold", start: "12:30", end: "14:30", at: "stmarys", note: "Waits through the ceremony" },
+        { v: "car", kind: "ride", who: "Bride & groom", from: [["stmarys", "14:30"]], to: [["maker"]], end: "14:45", note: "Photos at The Maker." },
+        { v: "car", kind: "hold", start: "14:45", end: "15:00", at: "maker", note: "Photos" },
+        { v: "car", kind: "ride", who: "Bride & groom", from: [["maker", "15:00"]], to: [["basilica"]], end: "15:15" },
+
+        { v: "s1", kind: "ride", from: [["voco", "11:20"]], to: [["stmarys", "12:00"]], note: "Boards at 11:20, departs 11:30 AM." },
+        { v: "s1", kind: "ride", from: [["pocketbook", "12:10"]], to: [["stmarys", "12:20"]] },
+        { v: "s1", kind: "hold", start: "12:20", end: "14:00", at: "stmarys", note: "Waits through the ceremony" },
+        { v: "s1", kind: "ride", from: [["stmarys", "14:00"]], to: [["basilica", "14:15"]], note: "Drops on the north side. Guests wait at the Basilica for cocktail hour." },
+        { v: "s1", kind: "ride", from: [["pocketbook", "15:00"]], to: [["basilica", "15:25"]] },
+        { v: "s1", kind: "ride", from: [["pocketbook", "15:35"]], to: [["basilica", "15:45"]] },
+        { v: "s1", kind: "hold", start: "15:45", end: "21:00", note: "Off until the evening" },
+        { v: "s1", kind: "ride", from: [["basilica", "21:00"]], to: [["voco", "21:30"]], note: "First ride back to Coxsackie." },
+        { v: "s1", kind: "ride", from: [["basilica", "22:00"]], to: [["voco", "22:30"]], note: "Last ride back to Coxsackie." },
+
+        { v: "s2", kind: "ride", from: [["pocketbook", "11:40"], ["navigator", "11:55"]], to: [["stmarys", "12:05"]], note: "Departs the Pocketbook at 11:45 AM." },
+        { v: "s2", kind: "ride", from: [["warren", "12:15"]], to: [["stmarys", "12:25"]] },
+        { v: "s2", kind: "hold", start: "12:25", end: "14:00", at: "stmarys", note: "Waits through the ceremony" },
+        { v: "s2", kind: "ride", from: [["stmarys", "14:00"]], to: [["pocketbook"]], end: "14:15" },
+        { v: "s2", kind: "ride", from: [["stmarys", "14:20"]], to: [["hudson"]], end: "14:40", note: "Second run back to Hudson stays." },
+        { v: "s2", kind: "loop", from: [["warren", "15:00"]], to: [["basilica", "15:20"]], end: "16:00", note: "First drop-off 3:20 PM, then loops until 4:00 PM." },
+        { v: "s2", kind: "hold", start: "16:00", end: "21:00", note: "Off until the evening" },
+        { v: "s2", kind: "loop", from: [["basilica", "21:00"]], to: [["hudson"]], end: "22:30", note: "Runs back and forth to Hudson stays until 10:30 PM." },
+
+        { v: "s3", kind: "loop", from: [["warren", "11:40"]], to: [["stmarys"]], end: "12:30", note: "Loops until the ceremony begins at 12:30 PM." },
+        { v: "s3", kind: "hold", start: "12:30", end: "14:00", at: "stmarys", note: "Waits through the ceremony" },
+        { v: "s3", kind: "loop", from: [["stmarys", "14:00"]], to: [["warren"]], end: "15:00", note: "2–3 runs back to the Warren St corners." },
+        { v: "s3", kind: "loop", from: [["warren", "15:00"]], to: [["basilica", "15:20"]], end: "16:00", note: "First drop-off 3:20 PM, then loops until 4:00 PM." },
+        { v: "s3", kind: "hold", start: "16:00", end: "21:00", note: "Off until the evening" },
+        { v: "s3", kind: "loop", from: [["basilica", "21:00"]], to: [["hudson"]], end: "22:30", note: "Runs back and forth to Hudson stays until 10:30 PM." }
+      ]
+    }
+  };
+
+  var CAR_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 11l1.6-4.2A2 2 0 0 1 8.5 5.5h7a2 2 0 0 1 1.9 1.3L19 11h.5A1.5 1.5 0 0 1 21 12.5V17h-2v1.5a1 1 0 0 1-2 0V17H7v1.5a1 1 0 0 1-2 0V17H3v-4.5A1.5 1.5 0 0 1 4.5 11H5zm2.2 0h9.6l-1.2-3.3a.5.5 0 0 0-.5-.3H8.9a.5.5 0 0 0-.5.3L7.2 11zM6.5 15a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4zm11 0a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z"/></svg>';
+
+  function mins(s) { var p = s.split(":"); return +p[0] * 60 + +p[1]; }
+  function fmt(m, ampm) {
+    var h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? "PM" : "AM", h12 = h % 12 || 12;
+    return h12 + ":" + (mm < 10 ? "0" : "") + mm + (ampm === false ? "" : " " + ap);
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function roundel(v, sm) {
+    var V = VEH[v];
+    return '<span class="roundel' + (sm ? " sm" : "") + '" style="--vc:' + V.color + '" aria-label="' + V.label + '">' + (V.mark === "car" ? CAR_SVG : V.mark) + "</span>";
+  }
+  function legStart(l) { return mins(l.start || l.from[0][1]); }
+  function legEnd(l) {
+    if (l.end) return mins(l.end);
+    var last = l.to[l.to.length - 1];
+    return last[1] ? mins(last[1]) : legStart(l) + 15;
+  }
+  function names(list) { return list.map(function (x) { return PLACES[x[0]].short; }).join(", "); }
+  function mapLink(p) {
+    var P = PLACES[p];
+    if (!P.addr) return "";
+    return '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(P.name + ", " + P.addr) + '" target="_blank" rel="noopener">' + esc(P.addr) + "</a>";
+  }
+
+  // Prepare legs
+  Object.keys(DAYS).forEach(function (d) {
+    DAYS[d].legs.forEach(function (l, i) { l.id = d + "-" + i; l.s = legStart(l); l.e = legEnd(l); });
+  });
+
+  var state = { day: new Date() >= new Date(2026, 11, 5) ? "saturday" : "friday", place: "all", veh: null, sel: null };
+  try {
+    var saved = localStorage.getItem("shuttle-place");
+    if (saved && PLACES[saved]) state.place = saved;
+  } catch (e) {}
+  var h = (location.hash || "").replace("#", "");
+  if (DAYS[h]) state.day = h;
+
+  function placesForDay(d) {
+    var used = {};
+    DAYS[d].legs.forEach(function (l) {
+      if (l.kind === "hold") return;
+      l.from.concat(l.to).forEach(function (x) { used[x[0]] = 1; });
+    });
+    if (used.warren || used.hudson) used.maker = 1;
+    if (used.hudson) HUDSON_STAYS.forEach(function (p) { used[p] = 1; });
+    delete used.hudson; delete used.tbd;
+    return used;
+  }
+
+  function renderDays() {
+    document.querySelectorAll(".day").forEach(function (b) {
+      b.setAttribute("aria-selected", b.dataset.day === state.day ? "true" : "false");
+    });
+    document.getElementById("events").innerHTML = DAYS[state.day].events.map(function (e) {
+      return '<div class="event"><h3>' + esc(e.title) + '</h3><span class="when">' + esc(e.when) + '</span><span class="where">' + esc(e.where) + "</span></div>";
+    }).join("");
+  }
+
+  function renderPicker() {
+    var used = placesForDay(state.day);
+    if (state.place !== "all" && !used[state.place]) state.place = "all";
+    function chip(id, label) {
+      return '<button class="chip" data-place="' + id + '" aria-pressed="' + (state.place === id) + '">' + esc(label) + "</button>";
+    }
+    var stays = ["voco", "pocketbook", "navigator", "maker", "warren"].filter(function (p) { return used[p]; });
+    var venues = ["stmarys", "caboose", "basilica"].filter(function (p) { return used[p]; });
+    document.getElementById("picker").innerHTML =
+      '<div class="chips"><span class="lbl">Show</span>' + chip("all", "Every shuttle") + "</div>" +
+      '<div class="chips"><span class="lbl">Staying</span>' + stays.map(function (p) { return chip(p, PLACES[p].short); }).join("") + "</div>" +
+      '<div class="chips"><span class="lbl">Leaving</span>' + venues.map(function (p) { return chip(p, PLACES[p].short); }).join("") + "</div>";
+  }
+
+  function timeCell(l) {
+    var sub = l.kind === "loop" ? "until " + fmt(l.e) : "";
+    return '<div class="time">' + fmt(l.s) + (sub ? "<small>" + sub + "</small>" : "") + "</div>";
+  }
+  function pathText(l, focusFrom) {
+    var from = l.from.map(function (x) {
+      var t = x[1] && l.from.length > 1 ? ' <span class="note">' + fmt(mins(x[1]), false) + "</span>" : "";
+      var n = esc(PLACES[x[0]].short);
+      return (focusFrom && x[0] === focusFrom ? "<u>" + n + "</u>" : n) + t;
+    }).join(", ");
+    return from + '<span class="arrow">→</span>' + esc(names(l.to));
+  }
+  function row(l, opts) {
+    opts = opts || {};
+    var V = VEH[l.v];
+    var notes = [];
+    if (opts.extra) notes.push(opts.extra);
+    if (l.kind === "loop") notes.push("Continuous loop. Catch it any time in this window.");
+    if (l.note) notes.push(l.note);
+    var tag = l.who ? '<span class="tag">' + esc(l.who) + "</span>" : "";
+    return '<button class="row' + (l.who && opts.dimPrivate ? " dim" : "") + '" data-leg="' + l.id + '" style="--vc:' + V.color + '">' +
+      timeCell(l) + roundel(l.v, true) +
+      '<div class="route"><div class="path">' + pathText(l, opts.focus) + tag + '</div>' +
+      (notes.length ? '<div class="note">' + esc(notes.join(" ")) + "</div>" : "") + "</div>" +
+      '<div class="cap"><b>' + V.seats + "</b>seats</div></button>";
+  }
+
+  function pickupTime(l, p) {
+    for (var i = 0; i < l.from.length; i++) if (l.from[i][0] === p && l.from[i][1]) return mins(l.from[i][1]);
+    return l.s;
+  }
+
+  function renderBoard() {
+    var D = DAYS[state.day];
+    var legs = D.legs.filter(function (l) { return l.kind !== "hold"; });
+    var html = "";
+    if (state.place === "all") {
+      legs.sort(function (a, b) { return a.s - b.s || a.v.localeCompare(b.v); });
+      html = '<div class="group-title">All departures · ' + esc(D.label) + "</div>" + legs.map(function (l) { return row(l, { dimPrivate: true }); }).join("");
+    } else {
+      var p = state.place, P = PLACES[p];
+      var alias = P.near;
+      var pick = legs.filter(function (l) { return l.from.some(function (x) { return x[0] === p || x[0] === alias; }); });
+      var back = legs.filter(function (l) {
+        return l.to.some(function (x) { return x[0] === p || x[0] === alias || (x[0] === "hudson" && HUDSON_STAYS.indexOf(p) >= 0); });
+      });
+      pick.sort(function (a, b) { return pickupTime(a, p) - pickupTime(b, p); });
+      back.sort(function (a, b) { return a.s - b.s; });
+      html = '<div class="place-info"><span class="pname">' + esc(P.name) + '</span><span class="paddr">' + mapLink(p) + "</span>" +
+        (P.note ? '<span class="paddr">' + esc(P.note) + "</span>" : "") +
+        (P.nearNote ? '<span class="paddr">' + esc(P.nearNote) + "</span>" : "") + "</div>";
+      var isVenue = P.kind === "venue";
+      html += '<div class="group-title">' + (isVenue ? "Shuttles leaving from here" : "Pick-ups here") + "</div>";
+      html += pick.length ? pick.map(function (l) {
+        var own = l.from.some(function (x) { return x[0] === p; });
+        var t = pickupTime(l, own ? p : alias);
+        var extra = !own && alias ? "Board at the Warren St & 3rd corner." : (l.from.length > 1 ? "Picks up here at " + fmt(t) + "." : "");
+        return row(l, { focus: own ? p : alias, extra: extra });
+      }).join("") : '<div class="empty">No shuttles pick up here on this day.</div>';
+      html += '<div class="group-title">' + (isVenue ? "Shuttles arriving here" : "Rides back here") + "</div>";
+      html += back.length ? back.map(function (l) {
+        var generic = l.to.every(function (x) { return x[0] !== p && x[0] !== alias; });
+        return row(l, { extra: generic ? "Drops off at Hudson stays, including yours." : "" });
+      }).join("") : '<div class="empty">No shuttles drop off here on this day.</div>';
+    }
+    document.getElementById("board").innerHTML = html;
+  }
+
+  function renderFleet() {
+    var D = DAYS[state.day];
+    var guestSeats = 0;
+    document.getElementById("fleet").innerHTML = D.vehicles.map(function (v) {
+      var V = VEH[v];
+      var legs = D.legs.filter(function (l) { return l.v === v; });
+      var s = Math.min.apply(null, legs.map(function (l) { return l.s; }));
+      var e = Math.max.apply(null, legs.map(function (l) { return l.e; }));
+      if (v !== "car") guestSeats += V.seats;
+      return '<button class="vcard" data-veh="' + v + '" aria-pressed="' + (state.veh === v) + '" style="--vc:' + V.color + '">' + roundel(v) +
+        '<span class="meta"><span class="name">' + V.label + '</span><span class="sub"><span class="seats">' + V.seats + " seats</span> · " + V.type +
+        '</span><span class="sub">' + fmt(s) + " – " + fmt(e) + "</span></span></button>";
+    }).join("");
+    document.getElementById("fleet-total").textContent = guestSeats + " guest seats on the road at once" + (D.vehicles.indexOf("car") >= 0 ? ", plus the black car for the couple" : "") + ". Tap a vehicle to highlight it.";
+  }
+
+  function renderTimeline() {
+    var D = DAYS[state.day], a = D.range[0], b = D.range[1];
+    function pct(m) { return ((m - a) / (b - a)) * 100; }
+    var ticks = "";
+    for (var m = a; m <= b; m += 60) ticks += '<span class="tick" style="left:' + pct(m) + '%">' + fmt(m).replace(":00", "") + "</span>";
+    var html = '<div class="tl-axis"><span></span><div class="ticks">' + ticks + "</div></div>";
+    var overlay = "";
+    if (D.band) overlay = '<div class="band" style="left:calc(132px + 18px + (100% - 168px) * ' + pct(mins(D.band.start)) / 100 + ');width:calc((100% - 168px) * ' + (pct(mins(D.band.end)) - pct(mins(D.band.start))) / 100 + ')"><span>' + esc(D.band.label) + "</span></div>";
+    if (D.marker) overlay = '<div class="marker" style="left:calc(132px + 18px + (100% - 168px) * ' + pct(mins(D.marker.at)) / 100 + ')"><span>' + esc(D.marker.label) + " " + fmt(mins(D.marker.at)) + "</span></div>";
+    D.vehicles.forEach(function (v) {
+      var V = VEH[v];
+      var grid = "";
+      for (var m = a; m <= b; m += 60) grid += '<span class="gridline" style="left:' + pct(m) + '%"></span>';
+      var blocks = D.legs.filter(function (l) { return l.v === v; }).map(function (l) {
+        var label = l.kind === "hold" ? "" : names(l.from) + " → " + names(l.to);
+        var title = l.kind === "hold" ? l.note : fmt(l.s) + " " + label;
+        return '<button class="blk ' + l.kind + (state.sel === l.id ? " sel" : "") + '" data-leg="' + l.id + '" title="' + esc(title) + '" aria-label="' + esc(V.label + ", " + title) + '" style="left:' + pct(l.s) + "%;width:" + (pct(l.e) - pct(l.s)) + '%">' + esc(label) + "</button>";
+      }).join("");
+      var dim = state.veh && state.veh !== v ? ' style="opacity:.35"' : "";
+      html += '<div class="tl-lane"' + dim + '><div class="who">' + roundel(v, true) + '<span class="meta"><b>' + V.label + "</b><span>" + V.seats + " seats</span></span></div>" +
+        '<div class="track" style="--vc:' + V.color + '">' + grid + blocks + "</div></div>";
+    });
+    document.getElementById("timeline").innerHTML = html + overlay;
+  }
+
+  function renderDetail() {
+    var el = document.getElementById("detail");
+    var l = null;
+    Object.keys(DAYS).forEach(function (d) { DAYS[d].legs.forEach(function (x) { if (x.id === state.sel) l = x; }); });
+    if (!l || l.id.indexOf(state.day) !== 0) { el.style.removeProperty("--vc"); el.innerHTML = '<div class="d-sub">Tap a bar above to see its stops.</div>'; return; }
+    var V = VEH[l.v];
+    el.style.setProperty("--vc", V.color);
+    if (l.kind === "hold") {
+      el.innerHTML = '<div class="d-title">' + V.label + " · " + esc(l.note) + '</div><div class="d-sub">' + fmt(l.s) + " – " + fmt(l.e) + (l.at ? " at " + esc(PLACES[l.at].name) : "") + "</div>";
+      return;
+    }
+    var stops = l.from.map(function (x) { return "Pick up at " + PLACES[x[0]].name + (x[1] ? " · " + fmt(mins(x[1])) : ""); })
+      .concat(l.to.map(function (x) { return "Drop off at " + PLACES[x[0]].name + (x[1] ? " · " + fmt(mins(x[1])) : ""); }));
+    el.innerHTML = '<div class="d-title">' + V.label + " · " + fmt(l.s) + (l.kind === "loop" ? " – " + fmt(l.e) + " loop" : "") + (l.who ? " · " + esc(l.who) : "") + "</div>" +
+      '<div class="d-sub">' + stops.map(esc).join(" → ") + "</div>" +
+      (l.note ? '<div class="d-sub">' + esc(l.note) + "</div>" : "") +
+      '<div class="d-sub">' + V.seats + " seats · " + V.type + "</div>";
+  }
+
+  function renderRoutes() {
+    var D = DAYS[state.day];
+    document.getElementById("routes").innerHTML = D.vehicles.map(function (v) {
+      var V = VEH[v];
+      var steps = "";
+      D.legs.filter(function (l) { return l.v === v; }).forEach(function (l) {
+        if (l.kind === "hold") {
+          steps += '<li class="step hold"><span class="st">' + fmt(l.s) + '</span><span class="dot"></span><span class="sx">' + esc(l.note) + (l.at ? " at " + esc(PLACES[l.at].short) : "") + " until " + fmt(l.e) + "</span></li>";
+          return;
+        }
+        var head = l.kind === "loop" ? "Loop until " + fmt(l.e) : "";
+        l.from.forEach(function (x, i) {
+          var t = x[1] ? fmt(mins(x[1])) : "";
+          var n = [];
+          if (i === 0 && head) n.push(head);
+          if (i === 0 && l.who) n.push(l.who);
+          steps += '<li class="step"><span class="st">' + t + '</span><span class="dot"></span><span class="sx">Pick up · <b>' + esc(PLACES[x[0]].name) + "</b>" + (n.length ? '<span class="n">' + esc(n.join(" · ")) + "</span>" : "") + "</span></li>";
+        });
+        l.to.forEach(function (x, i) {
+          var t = x[1] ? fmt(mins(x[1])) : "";
+          var n = i === l.to.length - 1 && l.note ? '<span class="n">' + esc(l.note) + "</span>" : "";
+          steps += '<li class="step"><span class="st">' + t + '</span><span class="dot"></span><span class="sx">Drop off · <b>' + esc(PLACES[x[0]].name) + "</b>" + n + "</span></li>";
+        });
+      });
+      return '<article class="rcard" style="--vc:' + V.color + '"><header>' + roundel(v) + '<span class="meta"><span class="name">' + V.label + '</span><span class="sub">' + V.seats + " seats · " + V.type + '</span></span></header><ol class="steps">' + steps + "</ol></article>";
+    }).join("");
+  }
+
+  function renderAll() {
+    renderDays(); renderPicker(); renderBoard(); renderFleet(); renderTimeline(); renderDetail(); renderRoutes();
+  }
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target.closest("[data-day],[data-place],[data-veh],[data-leg]");
+    if (!t) return;
+    if (t.dataset.day) {
+      state.day = t.dataset.day; state.sel = null; state.veh = null;
+      try { history.replaceState(null, "", "#" + state.day); } catch (e) {}
+      renderAll();
+    } else if (t.dataset.place) {
+      state.place = t.dataset.place;
+      try { localStorage.setItem("shuttle-place", state.place); } catch (e) {}
+      renderPicker(); renderBoard();
+    } else if (t.dataset.veh) {
+      state.veh = state.veh === t.dataset.veh ? null : t.dataset.veh;
+      renderFleet(); renderTimeline();
+    } else if (t.dataset.leg) {
+      state.sel = t.dataset.leg;
+      renderTimeline(); renderDetail();
+      if (t.classList.contains("row")) document.getElementById("h-tl").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+  window.addEventListener("hashchange", function () {
+    var h = location.hash.replace("#", "");
+    if (DAYS[h] && h !== state.day) { state.day = h; state.sel = null; renderAll(); }
+  });
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
