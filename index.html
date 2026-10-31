@@ -325,6 +325,30 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   .speed { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 8px; }
   .scrub-mark { font-size: 9.5px; }
 }
+
+/* Guest FAQ */
+.faq { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 22px 24px; gap: 12px; }
+.faq h2 { font-size: 30px; }
+.faq-intro { margin: 0; max-width: 68ch; }
+.faq-callout { margin: 0; background: var(--sunk); border-radius: 10px; padding: 10px 14px; font-size: 14px; max-width: 80ch; }
+.faq-days { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 6px; }
+.faq-day { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.faq-day header { gap: 2px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.faq-day h3 { font-family: var(--display); font-size: 22px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink); }
+.faq-day header p { margin: 0; color: var(--muted); font-size: 14px; }
+.faq-day h4 { margin: 10px 0 0; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.faq-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.faq-list li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+.faq-list li:last-child { border-bottom: 0; }
+.faq-list li span { font-weight: 500; }
+.faq-list li b { font-variant-numeric: tabular-nums; text-align: right; }
+.faq-list li b small { display: block; font-weight: 400; color: var(--muted); font-size: 12.5px; }
+.faq-note { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+.faq-note b { color: var(--ink); }
+@media (max-width: 760px) {
+  .faq { padding: 18px 16px 20px; }
+  .faq-days { grid-template-columns: minmax(0, 1fr); }
+}
 </style>
 
 </head>
@@ -333,8 +357,66 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   <header>
     <div class="eyebrow">Hudson, New York · December 4–5, 2026</div>
     <h1>Caroline <em>&amp;</em> Joe · Shuttles</h1>
-    <p class="lede">Pick a day, then tap where you're staying to see every shuttle that picks up there and every ride back. Times are scheduled pick-up times; please be outside a few minutes early.</p>
   </header>
+
+  <section class="faq" aria-labelledby="h-faq">
+    <h2 id="h-faq">How do the shuttles work?</h2>
+    <p class="faq-intro">Free shuttles run between the hotels and every event on Friday and Saturday, so nobody needs to drive. Find where you're staying below and be at the pick-up spot about 5 minutes early.</p>
+    <p class="faq-callout"><b>Staying on or near Warren Street?</b> This includes The Maker Hotel, Airbnbs and other places in town. Shuttles stop at the corners of Warren St and 7th, 5th, 3rd and 1st Streets, in that order. The Maker is at the 3rd St stop.</p>
+
+    <div class="faq-days">
+      <article class="faq-day">
+        <header>
+          <h3>Friday, December 4</h3>
+          <p>Welcome dinner at The Caboose, 60 S Front St</p>
+        </header>
+        <h4>Getting to dinner</h4>
+        <ul class="faq-list">
+          <li><span>voco James Newbury Hotel, Coxsackie</span><b>Board 5:30 PM<small>Departs 5:45, arrives about 6:15</small></b></li>
+          <li><span>Pocketbook Hudson</span><b>6:00 PM</b></li>
+          <li><span>Warren St stops &amp; The Maker</span><b>6:10 PM<small>Second pick-up at 6:35 PM</small></b></li>
+          <li><span>Hudson Navigator</span><b>6:20 PM</b></li>
+        </ul>
+        <h4>Getting home</h4>
+        <ul class="faq-list">
+          <li><span>Hudson hotels &amp; Warren St</span><b>9:00 – 10:30 PM<small>Shuttles run back and forth all evening</small></b></li>
+          <li><span>voco, Coxsackie</span><b>9:00 PM<small>May leave as late as 9:30. This is the only ride back to Coxsackie.</small></b></li>
+        </ul>
+        <p class="faq-note"><b>Wedding party:</b> your shuttle picks up at Pocketbook Hudson at 5:10, The Maker at 5:20 and Hudson Navigator at 5:30 PM. It takes you to St. Mary's Church first, then on to dinner.</p>
+      </article>
+
+      <article class="faq-day">
+        <header>
+          <h3>Saturday, December 5</h3>
+          <p>Ceremony at 12:30 PM at St. Mary's Church, 429 E Allen St. Reception at Basilica Hudson, 110 S Front St.</p>
+        </header>
+        <h4>Getting to the ceremony</h4>
+        <ul class="faq-list">
+          <li><span>voco James Newbury Hotel, Coxsackie</span><b>Board 11:20 AM<small>Departs 11:30, arrives about 12:00</small></b></li>
+          <li><span>Pocketbook Hudson</span><b>11:40 AM or 12:10 PM</b></li>
+          <li><span>Hudson Navigator</span><b>11:55 AM</b></li>
+          <li><span>Warren St stops &amp; The Maker</span><b>From 11:40 AM<small>Shuttles loop until the ceremony. Board by 12:15 PM.</small></b></li>
+        </ul>
+        <h4>After the ceremony</h4>
+        <ul class="faq-list">
+          <li><span>Straight to the reception</span><b>2:00 PM<small>Drops off at the north side of Basilica Hudson about 2:15. Relax there until cocktail hour. Coxsackie guests, this is your shuttle.</small></b></li>
+          <li><span>Back to Hudson hotels to rest</span><b>2:00 – 3:00 PM<small>Shuttles to the Pocketbook (2:00), other Hudson hotels (2:20) and the Warren St stops (loops until 3:00)</small></b></li>
+        </ul>
+        <h4>Getting to the reception</h4>
+        <ul class="faq-list">
+          <li><span>Pocketbook Hudson</span><b>3:00 PM or 3:35 PM<small>Arrives about 3:25 or 3:45</small></b></li>
+          <li><span>Warren St stops &amp; The Maker</span><b>3:00 – 4:00 PM<small>Shuttles loop; the first arrives about 3:20</small></b></li>
+          <li><span>Hudson Navigator</span><b>3:00 – 4:00 PM<small>Walk to the Warren &amp; 3rd St stop</small></b></li>
+        </ul>
+        <h4>Getting home</h4>
+        <ul class="faq-list">
+          <li><span>Hudson hotels &amp; Warren St</span><b>9:00 – 10:30 PM<small>Shuttles run back and forth from Basilica Hudson</small></b></li>
+          <li><span>voco, Coxsackie</span><b>9:00 PM or 10:00 PM<small>The 10:00 PM shuttle is the last ride to Coxsackie</small></b></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
 
   <div class="days" role="tablist" aria-label="Day">
     <button class="day" role="tab" id="tab-friday" data-day="friday"><b>Friday, Dec 4</b><span>Welcome dinner at The Caboose</span></button>
@@ -346,7 +428,7 @@ footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line)
   <section aria-labelledby="h-board">
     <div class="sec-head">
       <h2 id="h-board">Where are you?</h2>
-      <p class="hint">Choose a hotel or venue to filter the board.</p>
+      <p class="hint">Tap where you're staying to see every pick-up and every ride back.</p>
     </div>
     <div class="picker" id="picker"></div>
     <div class="board" id="board"></div>
